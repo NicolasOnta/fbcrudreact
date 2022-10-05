@@ -90,9 +90,9 @@ function App() {
             {" "}
             <h1>Nombre: {user.name}</h1>
             <h1>Edad: {user.age}</h1>
-            <h1>Apellido: {user.age}</h1>
-            <h1>Contraseña: {user.age}</h1>
-            <h1>Nombre de usuario: {user.age}</h1>
+            <h1>Apellido: {user.lastName}</h1>
+            <h1>Contraseña: {user.password}</h1>
+            <h1>Nombre de usuario: {user.username}</h1>
             <button
               onClick={() => {
                 updateUser(user.id);
