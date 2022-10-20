@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { db } from "./firebase-conf";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import Login from "./login";
 import {
   collection,
   getDocs,
@@ -19,6 +21,8 @@ function App() {
 
   const [users, setUsers] = useState([]);
   const usersCollectionRef = collection(db, "users");
+  const auth = getAuth();
+  const [usuario, setUsuario] = useState(null);
 
   const createUser = async () => {
     await addDoc(usersCollectionRef, { name: newName, age: Number(newAge), password:password, lastName:lastName, username:username });
@@ -49,69 +53,93 @@ function App() {
     getUsers();
   }, [usersCollectionRef]);
 
+  useEffect(()=>{
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUsuario(user);
+      } else {
+        setUsuario(null)
+      }
+    });
+  })
+
+  const cerrarSesion = () => {
+    signOut(auth).then(() => {
+    }).catch((error) => {
+    });
+  };
+
   return (
     <div className="App">
-      <input
-        placeholder="Nombre"
-        onChange={(event) => {
-          setNewName(event.target.value);
-        }}
-      />
-      <input
-        type="number"
-        placeholder="Edad..."
-        onChange={(event) => {
-          setNewAge(event.target.value);
-        }}
-      />
-      <input
-        placeholder="Apellido"
-        onChange={(event) => {
-          setLastName(event.target.value);
-        }}
-      />
-      <input
-        placeholder="Contraseña"
-        onChange={(event) => {
-          setNewPassword(event.target.value);
-        }}
-      />
-      <input
-        placeholder="Nombre de usuario"
-        onChange={(event) => {
-          setUsername(event.target.value);
-        }}
-      />
+      <div className="Login">
+    <>{usuario ? 
+     <div className="previous app">
+     <input
+       placeholder="Nombre"
+       onChange={(event) => {
+         setNewName(event.target.value);
+       }}
+     />
+     <input
+       type="number"
+       placeholder="Edad..."
+       onChange={(event) => {
+         setNewAge(event.target.value);
+       }}
+     />
+     <input
+       placeholder="Apellido"
+       onChange={(event) => {
+         setLastName(event.target.value);
+       }}
+     />
+     <input
+       placeholder="Contraseña"
+       onChange={(event) => {
+         setNewPassword(event.target.value);
+       }}
+     />
+     <input
+       placeholder="Nombre de usuario"
+       onChange={(event) => {
+         setUsername(event.target.value);
+       }}
+     />
 
-      <button onClick={createUser}> Crear Usuario</button>
-      {users.map((user) => {
-        return (
-          <div>
-            {" "}
-            <h1>Nombre: {user.name}</h1>
-            <h1>Edad: {user.age}</h1>
-            <h1>Apellido: {user.lastName}</h1>
-            <h1>Contraseña: {user.password}</h1>
-            <h1>Nombre de usuario: {user.username}</h1>
-            <button
-              onClick={() => {
-                updateUser(user.id);
-              }}
-            >
-              {" "}
-              Cambiar Contraseña
-            </button>
-            <button
-              onClick={() => {
-                deleteUser(user.id);
-              }}
-            >
-              {" "}
-              Eliminar usuario
-            </button>
-          </div>
-        );
-      })}
+     <button onClick={createUser}> Crear Usuario</button>
+     {users.map((user) => {
+       return (
+         <div>
+           {" "}
+           <h1>Nombre: {user.name}</h1>
+           <h1>Edad: {user.age}</h1>
+           <h1>Apellido: {user.lastName}</h1>
+           <h1>Contraseña: {user.password}</h1>
+           <h1>Nombre de usuario: {user.username}</h1>
+           <button
+             onClick={() => {
+               updateUser(user.id);
+             }}
+           >
+             {" "}
+             Cambiar Contraseña
+           </button>
+           <button
+             onClick={() => {
+               deleteUser(user.id);
+             }}
+           >
+             {" "}
+             Eliminar usuario
+           </button>
+           <button onClick={cerrarSesion}>Cerrar Sesión</button>
+         </div>
+         
+       );
+     })}
+     </div>
+    : <Login setUsuario={setUsuario} />}</>;
+      </div>
     </div>
   );
 }
