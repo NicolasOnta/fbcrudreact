@@ -14,18 +14,17 @@ import {
 
 function App() {
   const [newName, setNewName] = useState("");
-  const [newAge, setNewAge] = useState(0);
-  const [password, setNewPassword]= useState("");
-  const [lastName, setLastName]= useState("");
-  const[username, setUsername]=useState("");
+  const [price, setPrice] = useState(0);
+  const [description, setNewDescription]= useState("");
+  const [brand, setBrand]= useState("");
 
-  const [users, setUsers] = useState([]);
-  const usersCollectionRef = collection(db, "users");
+  const [components, setComponents] = useState([]);
+  const componentsCollectionRef = collection(db, "components");
   const auth = getAuth();
   const [usuario, setUsuario] = useState(null);
 
   const createUser = async () => {
-    await addDoc(usersCollectionRef, { name: newName, age: Number(newAge), password:password, lastName:lastName, username:username });
+    await addDoc(componentsCollectionRef, { name: newName, price: Number(price), description:description, brand:brand});
   };
 
   const updateUser = async (id) => {
@@ -40,18 +39,18 @@ function App() {
   };
 
   const deleteUser = async (id) => {
-    const userDoc = doc(db, "users", id);
+    const userDoc = doc(db, "components", id);
     await deleteDoc(userDoc);
   };
 
   useEffect(() => {
     const getUsers = async () => {
-      const data = await getDocs(usersCollectionRef);
-      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const data = await getDocs(componentsCollectionRef);
+      setComponents(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
     getUsers();
-  }, [usersCollectionRef]);
+  }, [componentsCollectionRef]);
 
   useEffect(()=>{
     onAuthStateChanged(auth, (user) => {
@@ -75,50 +74,43 @@ function App() {
     <>{usuario ? 
      <div className="previous app">
      <input
-       placeholder="Nombre"
+       placeholder="Nombre del componente"
        onChange={(event) => {
          setNewName(event.target.value);
        }}
      />
      <input
        type="number"
-       placeholder="Edad..."
+       placeholder="Precio"
        onChange={(event) => {
-         setNewAge(event.target.value);
+         setPrice(event.target.value);
        }}
      />
      <input
-       placeholder="Apellido"
+       placeholder="Descripcion"
        onChange={(event) => {
-         setLastName(event.target.value);
+         setNewDescription(event.target.value);
        }}
      />
      <input
-       placeholder="Contraseña"
+       placeholder="Marca"
        onChange={(event) => {
-         setNewPassword(event.target.value);
-       }}
-     />
-     <input
-       placeholder="Nombre de usuario"
-       onChange={(event) => {
-         setUsername(event.target.value);
+         setBrand(event.target.value);
        }}
      />
 
-     <button onClick={createUser}> Crear Usuario</button>
-     {users.map((user) => {
+     <button onClick={createUser}> Ingresar Componente</button>
+     {components.map((component) => {
        return (
          <div>
            {" "}
-           <h1>Nombre: {user.name}</h1>
-           <h1>Edad: {user.age}</h1>
-           <h1>Apellido: {user.lastName}</h1>
-           <h1>Contraseña: {user.password}</h1>
-           <h1>Nombre de usuario: {user.username}</h1>
+           <h1>Nombre: {component.name}</h1>
+           <h1>Precio: {component.price}</h1>
+           <h1>Marca: {component.brand}</h1>
+           <h1>Descripcion: {component.description}</h1>
            <button
              onClick={() => {
-               updateUser(user.id);
+               updateUser(component.id);
              }}
            >
              {" "}
@@ -126,7 +118,7 @@ function App() {
            </button>
            <button
              onClick={() => {
-               deleteUser(user.id);
+               deleteUser(component.id);
              }}
            >
              {" "}
