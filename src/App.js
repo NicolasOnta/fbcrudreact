@@ -13,44 +13,60 @@ import {
 } from "firebase/firestore";
 
 function App() {
+  const [form, setForm] = useState(0);
   const [newName, setNewName] = useState("");
   const [price, setPrice] = useState(0);
   const [description, setNewDescription]= useState("");
   const [brand, setBrand]= useState("");
+const [appName, newAppName]= useState("");
+const [popularity, setPopularity]= useState(0);
 
   const [components, setComponents] = useState([]);
+  const[applications, setApplications]=useState([])
   const componentsCollectionRef = collection(db, "components");
+  const applicationsCollectionRef = collection(db, "applications");
   const auth = getAuth();
   const [usuario, setUsuario] = useState(null);
 
-  const createUser = async () => {
+  const createComponents = async () => {
     await addDoc(componentsCollectionRef, { name: newName, price: Number(price), description:description, brand:brand});
   };
 
-  const updateUser = async (id) => {
-  const passwordChange = prompt("Ingrese la nueva contraseña:");
-  if (passwordChange == null || passwordChange === "") {
-    window.alert("No se cambio la contraseña");
-  } else {
-    const userDoc = doc(db, "users", id);
-    const newFields = { password: passwordChange };
-    await updateDoc(userDoc, newFields);
+  const createApplications = async () =>{
+    await addDoc(applicationsCollectionRef, { name: appName, popularity: popularity});
   }
-  };
 
-  const deleteUser = async (id) => {
+  // const updateUser = async (id) => {
+  // const passwordChange = prompt("Ingrese la nueva contraseña:");
+  // if (passwordChange == null || passwordChange === "") {
+  //   window.alert("No se cambio la contraseña");
+  // } else {
+  //   const userDoc = doc(db, "users", id);
+  //   const newFields = { password: passwordChange };
+  //   await updateDoc(userDoc, newFields);
+  // }
+  // };
+
+  const deleteComponent = async (id) => {
     const userDoc = doc(db, "components", id);
     await deleteDoc(userDoc);
   };
 
+  const deleteApplications = async (id) =>{
+    const userDoc = doc(db, "applications", id);
+    await deleteDoc(userDoc);
+  }
+
   useEffect(() => {
-    const getUsers = async () => {
+    const getComponents = async () => {
       const data = await getDocs(componentsCollectionRef);
+      const appData = await getDocs(applicationsCollectionRef);
       setComponents(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setApplications(appData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
-    getUsers();
-  }, [componentsCollectionRef]);
+    getComponents();
+  }, [applicationsCollectionRef, componentsCollectionRef]);
 
   useEffect(()=>{
     onAuthStateChanged(auth, (user) => {
@@ -73,6 +89,7 @@ function App() {
       <div className="Login">
     <>{usuario ? 
      <div className="previous app">
+        <div className="componentForm">
      <input
        placeholder="Nombre del componente"
        onChange={(event) => {
@@ -99,7 +116,7 @@ function App() {
        }}
      />
 
-     <button onClick={createUser}> Ingresar Componente</button>
+     <button onClick={createComponents}> Ingresar Componente</button>
      {components.map((component) => {
        return (
          <div>
@@ -108,27 +125,65 @@ function App() {
            <h1>Precio: {component.price}</h1>
            <h1>Marca: {component.brand}</h1>
            <h1>Descripcion: {component.description}</h1>
-           <button
+           {/* <button
              onClick={() => {
                updateUser(component.id);
              }}
            >
              {" "}
              Cambiar Contraseña
-           </button>
+           </button> */}
            <button
              onClick={() => {
-               deleteUser(component.id);
+               deleteComponent(component.id);
              }}
            >
              {" "}
-             Eliminar usuario
+             Eliminar Componente
            </button>
            <button onClick={cerrarSesion}>Cerrar Sesión</button>
          </div>
          
        );
      })}
+     </div>
+      (
+<div className="ApplicationForm">
+     <input
+       placeholder="Nombre de aplicación"
+       onChange={(event) => {
+        newAppName(event.target.value);
+       }}
+     />
+     <input
+       type="number"
+       placeholder="Popularity"
+       onChange={(event) => {
+        setPopularity(event.target.value);
+       }}
+     />
+     <button onClick={createApplications}> Ingresar Aplicacion</button>
+     {applications.map((application) => {
+       return (
+         <div>
+           {" "}
+           <h1>Nombre: {application.name}</h1>
+           <h1>Precio: {application.popularity}</h1>
+           <button
+             onClick={() => {
+               deleteApplications(application.id);
+             }}
+           >
+             {" "}
+             Eliminar Aplicacion
+           </button>
+           <button onClick={cerrarSesion}>Cerrar Sesión</button>
+         </div>
+         
+       );
+     })}
+     </div>
+      
      </div>
     : <Login setUsuario={setUsuario} />}</>;
       </div>
