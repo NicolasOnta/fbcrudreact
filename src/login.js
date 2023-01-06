@@ -7,10 +7,11 @@ const Login = (props) => {
   const [isRegistrando, setIsRegistrando] = useState(false);
   const [email, setEmail]=useState();
   const [password, setPassword]=useState();
+  const admin = false;
   const auth = getAuth(app);
 
   const crearUsuario = () => {
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, email, password, admin)
   .then((userCredential) => {
     const user = userCredential.user;
     console.log(user);

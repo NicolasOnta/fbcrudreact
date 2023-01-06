@@ -3,13 +3,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCz8OoEk0CB_P8Ha1MfZp2v8KfTmBgxD_w",
-  authDomain: "fir-crud-c586b.firebaseapp.com",
-  databaseURL: "https://fir-crud-c586b-default-rtdb.firebaseio.com",
-  projectId: "fir-crud-c586b",
-  storageBucket: "fir-crud-c586b.appspot.com",
-  messagingSenderId: "498813592130",
-  appId: "1:498813592130:web:24127b98a52bc97557c3db"
+  apiKey: "AIzaSyBMnuhcxcII83ErrX7XooatKuwjSXnvZuM",
+  authDomain: "corerespaldo-5e959.firebaseapp.com",
+  projectId: "corerespaldo-5e959",
+  storageBucket: "corerespaldo-5e959.appspot.com",
+  messagingSenderId: "248676109106",
+  appId: "1:248676109106:web:b93edb9d7223e39670e52b"
 };
   // Initialize Firebase
   export const app = initializeApp(firebaseConfig);
